@@ -1,21 +1,51 @@
-﻿namespace JonasBot;
+﻿using System.Text;
+using JonasBot.JsonClasses;
+
+namespace JonasBot;
 
 class Program
 {
-    static void Main(string[] args)
+    static readonly HttpClient client = new HttpClient();
+
+    static async Task Main(string[] args)
     {
-        Console.WriteLine("Hi, Jonas.");
-        // Console.WriteLine("Você mora dentro da baleia.");
-        Console.WriteLine("Whatever I write here will show up on screen.");
+        var telegramMe = await TelegramApi.Instance.GetMe();
 
-        Console.WriteLine("Did you understand?");
-        var text = Console.ReadLine();
+        var continueGettingUpdates = true;
+        do
+        {
+            var updates = await TelegramApi.Instance.GetUpdates();
+            var messageReply = new StringBuilder();
 
-        if(text == "yes")
-            Console.WriteLine("Well done.");
-        else 
-            Console.WriteLine("Wrong answer.");
+            // Read and Reply to messages
+            foreach (var message in updates.result)
+            {
+                switch (message.message.text)
+                {
+                    case "/start":
+                        messageReply.AppendLine("Hi!");
+                        messageReply.AppendLine($"You're talking to {telegramMe.Name}.");
+                        messageReply.AppendLine($"I am {(telegramMe.IsBot ? "a bot" : "not a bot")}.");
+                        break;
+                    case "/exit":
+                        messageReply.AppendLine("Ok, app is closing now.");
+                        continueGettingUpdates = false;
+                        break;
+                    default:
+                        break;
+                }
 
+                if (messageReply.Length > 0)
+                {
+                    await TelegramApi.Instance.SendMessage(new SendMessageDto(message.message.chat.id, messageReply.ToString()));
+                    messageReply.Clear();
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+            }
+        } while (continueGettingUpdates);
+
+        Console.WriteLine("App closing.");
         Console.ReadKey();
     }
 }

@@ -1,25 +1,23 @@
-﻿using System.Net.Http.Formatting;
-using System.Text;
+﻿using System.Text;
 using JonasBot.JsonClasses;
 using JonasBot.Model;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace JonasBot;
 
 public class TelegramApi
 {
-    private static HttpClient client;
+    private HttpClient client;
+    private readonly string token, baseUrl;
 
-    private TelegramApi() => client = new HttpClient();
-
-    // TODO: Change Telegram Api to allow multiple instances to talk to multiple bots
-    public static TelegramApi Instance { get; } = new();
+    public TelegramApi(string botToken)
+    {
+        client = new HttpClient();
+        token = botToken;
+        baseUrl = $"https://api.telegram.org/bot{token}/";
+    }
 
     // TODO: create enum with methods and parse enum name to string when sending it
-    private static readonly string
-        token = "",
-        baseUrl = $"https://api.telegram.org/bot{token}/";
 
     public async Task<TelegramBot> GetMe()
     {
@@ -41,7 +39,6 @@ public class TelegramApi
 
     public async Task SendMessage(SendMessageDto sendMessageDto)
     {
-
         // Serialize the data to JSON
         string jsonString = JsonConvert.SerializeObject(sendMessageDto);
         StringContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");

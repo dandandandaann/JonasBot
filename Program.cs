@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using JonasBot.JsonClasses;
+using Microsoft.Extensions.Configuration;
 
 namespace JonasBot;
 
@@ -9,12 +10,17 @@ class Program
 
     static async Task Main(string[] args)
     {
-        var telegramMe = await TelegramApi.Instance.GetMe();
+        var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+        var secretProvider = config.Providers.First();
+        secretProvider.TryGet("BotToken", out var botToken);
+
+        var bot = new TelegramApi(botToken);
+        var telegramMe = await bot.GetMe();
 
         var continueGettingUpdates = true;
         do
         {
-            var updates = await TelegramApi.Instance.GetUpdates();
+            var updates = await bot.GetUpdates();
             var messageReply = new StringBuilder();
 
             // Read and Reply to messages
@@ -37,7 +43,7 @@ class Program
 
                 if (messageReply.Length > 0)
                 {
-                    await TelegramApi.Instance.SendMessage(new SendMessageDto(message.message.chat.id, messageReply.ToString()));
+                    await bot.SendMessage(new SendMessageDto(message.message.chat.id, messageReply.ToString()));
                     messageReply.Clear();
                 }
 

@@ -29,9 +29,9 @@ public class TelegramApi
         return new BotInfo(content.result.first_name, content.result.is_bot);
     }
 
-    public async Task<GetUpdatesDto> GetUpdates()
+    public async Task<GetUpdatesDto> GetUpdates(int offset = 0)
     {
-        var response = await client.GetAsync(GetUrl(ApiMethod.getUpdates));
+        var response = await client.GetAsync(GetUrl(ApiMethod.getUpdates) + $"?offset={offset + 1}");
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsAsync<GetUpdatesDto>();

@@ -15,6 +15,8 @@ class Program
         var secretProvider = config.Providers.First();
         secretProvider.TryGet("BotToken", out var botToken);
 
+
+        // TODO: move loop  with logic to separate class (Jonas?)
         var bot = new TelegramBot(botToken);
 
         var continueGettingUpdates = true;

@@ -47,9 +47,9 @@ public class TelegramApi
         response.EnsureSuccessStatusCode();
     }
 
-    private string GetUrl(ApiMethod method) => $"{baseUrl}{method.ToString()}";
+    internal string GetUrl(ApiMethod method) => $"{baseUrl}{method.ToString()}";
 
-    enum ApiMethod
+    internal enum ApiMethod
     {
         getMe,
         getUpdates,

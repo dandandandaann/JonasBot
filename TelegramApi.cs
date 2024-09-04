@@ -5,9 +5,12 @@ using Newtonsoft.Json;
 
 namespace JonasBot;
 
+// TODO: use TelegramBot instead of this and leave only Api methods here
+// TODO: execute GetMe in constructor and save data in the class for lookup
+
 public class TelegramApi
 {
-    private HttpClient client;
+    private readonly HttpClient client;
     private readonly string token, baseUrl;
 
     public TelegramApi(string botToken)
@@ -17,11 +20,9 @@ public class TelegramApi
         baseUrl = $"https://api.telegram.org/bot{token}/";
     }
 
-    // TODO: create enum with methods and parse enum name to string when sending it
-
     public async Task<TelegramBot> GetMe()
     {
-        var response = await client.GetAsync($"{baseUrl}getMe");
+        var response = await client.GetAsync(GetUrl(ApiMethod.getMe));
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsAsync<GetMeDto>();
@@ -30,7 +31,7 @@ public class TelegramApi
 
     public async Task<GetUpdatesDto> GetUpdates()
     {
-        var response = await client.GetAsync($"{baseUrl}getUpdates");
+        var response = await client.GetAsync(GetUrl(ApiMethod.getUpdates));
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsAsync<GetUpdatesDto>();
@@ -39,12 +40,19 @@ public class TelegramApi
 
     public async Task SendMessage(SendMessageDto sendMessageDto)
     {
-        // Serialize the data to JSON
         string jsonString = JsonConvert.SerializeObject(sendMessageDto);
         StringContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-        // var response = await client.PostAsJsonAsync($"{baseUrl}sendMessage", sendMessageDto);
-        var response = await client.PostAsync($"{baseUrl}sendMessage", content);
+        var response = await client.PostAsync(GetUrl(ApiMethod.sendMessage), content);
         response.EnsureSuccessStatusCode();
+    }
+
+    private string GetUrl(ApiMethod method) => $"{baseUrl}{method.ToString()}";
+
+    enum ApiMethod
+    {
+        getMe,
+        getUpdates,
+        sendMessage
     }
 }

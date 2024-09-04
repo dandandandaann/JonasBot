@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using JonasBot.JsonClasses;
+using JonasBot.Dto;
 using JonasBot.Model;
 using Newtonsoft.Json;
 
-namespace JonasBot;
+namespace JonasBot.Telegram;
 
 // TODO: use TelegramBot instead of this and leave only Api methods here
 // TODO: execute GetMe in constructor and save data in the class for lookup
@@ -20,13 +20,13 @@ public class TelegramApi
         baseUrl = $"https://api.telegram.org/bot{token}/";
     }
 
-    public async Task<TelegramBot> GetMe()
+    public async Task<BotInfo> GetMe()
     {
         var response = await client.GetAsync(GetUrl(ApiMethod.getMe));
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsAsync<GetMeDto>();
-        return new TelegramBot(content.result.first_name, content.result.is_bot);
+        return new BotInfo(content.result.first_name, content.result.is_bot);
     }
 
     public async Task<GetUpdatesDto> GetUpdates()

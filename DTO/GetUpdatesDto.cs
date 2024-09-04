@@ -1,4 +1,4 @@
-﻿namespace JonasBot.JsonClasses;
+﻿namespace JonasBot.Dto;
 
 public record GetUpdatesDto(
     bool ok,

@@ -1,12 +1,13 @@
 ﻿using System.Text;
-using JonasBot.JsonClasses;
+using JonasBot.Dto;
+using JonasBot.Telegram;
 using Microsoft.Extensions.Configuration;
 
 namespace JonasBot;
 
 class Program
 {
-    static readonly HttpClient client = new HttpClient();
+    static readonly HttpClient client = new();
 
     static async Task Main(string[] args)
     {
@@ -14,8 +15,7 @@ class Program
         var secretProvider = config.Providers.First();
         secretProvider.TryGet("BotToken", out var botToken);
 
-        var bot = new TelegramApi(botToken);
-        var telegramMe = await bot.GetMe();
+        var bot = new TelegramBot(botToken);
 
         var continueGettingUpdates = true;
         do
@@ -30,8 +30,8 @@ class Program
                 {
                     case "/start":
                         messageReply.AppendLine("Hi!");
-                        messageReply.AppendLine($"You're talking to {telegramMe.Name}.");
-                        messageReply.AppendLine($"I am {(telegramMe.IsBot ? "a bot" : "not a bot")}.");
+                        messageReply.AppendLine($"You're talking to {bot.Info.Name}.");
+                        messageReply.AppendLine($"I am {(bot.Info.IsBot ? "a bot" : "not a bot")}.");
                         break;
                     case "/exit":
                         messageReply.AppendLine("Ok, app is closing now.");

@@ -1,6 +1,7 @@
 ﻿namespace JonasBot.Model;
 
-public record TelegramBot(
+
+public record BotInfo(
     string Name,
     bool IsBot
 );

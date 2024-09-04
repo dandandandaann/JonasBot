@@ -1,7 +1,5 @@
-﻿using System.Text;
-using JonasBot.Dto;
+﻿using JonasBot.Dto;
 using JonasBot.Model;
-using Newtonsoft.Json;
 
 namespace JonasBot.Telegram;
 

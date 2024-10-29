@@ -6,12 +6,12 @@ public record GetUpdatesDto(
 );
 
 public record GetUpdatesResultDto(
-    int update_id,
+    long update_id,
     TelegramMessageDto message
 );
 
 public record TelegramMessageDto(
-    string message_id,
+    long message_id,
     MessageFromDto from,
     MessageChatDto chat,
     int date,
@@ -19,7 +19,7 @@ public record TelegramMessageDto(
 );
 
 public record MessageFromDto(
-    int id,
+    long id,
     bool is_bot,
     string first_name,
     string last_name,

@@ -15,7 +15,7 @@ public class TelegramBot
         Info = api.GetMe().GetAwaiter().GetResult();
     }
 
-    public async Task<GetUpdatesDto> GetUpdates() => await api.GetUpdates();
+    public async Task<GetUpdatesDto> GetUpdates(long offset = 0) => await api.GetUpdates(offset);
 
     public async Task SendMessage(SendMessageDto sendMessageDto) => await api.SendMessage(sendMessageDto);
 }
